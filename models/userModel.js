@@ -22,6 +22,11 @@ const userSchema = new Schema(
       required: true,
     },
 
+    isOnline: {
+      type: Boolean,
+      default: true,
+    },
+
     lastSeen: {
       type: Date,
       default: null,

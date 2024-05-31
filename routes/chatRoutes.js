@@ -5,6 +5,8 @@ const {
   convoValidation,
   getChatsValidation,
   deleteConvoValidations,
+  createGroupValdiation,
+  editGroupValidations,
 } = require("../middleware/validators");
 const {
   sendMsgController,
@@ -15,6 +17,9 @@ const {
   findConvoController,
   findPastConvo,
   deleteConvoController,
+  createGroupController,
+  createNewConvo,
+  EditGroupController,
 } = require("../controllers/conversationController");
 
 const router = express.Router();
@@ -52,6 +57,27 @@ router.post(
   authenticate,
   deleteMessagesController,
   deleteMessagesController
+);
+
+router.post(
+  "/add-new-conversation",
+  authenticate,
+  convoValidation,
+  createNewConvo
+);
+
+router.post(
+  "/create-group",
+  authenticate,
+  createGroupValdiation,
+  createGroupController
+);
+
+router.post(
+  "/edit-group",
+  authenticate,
+  editGroupValidations,
+  EditGroupController
 );
 
 module.exports = router;

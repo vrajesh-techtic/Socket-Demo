@@ -45,7 +45,11 @@ const fetchUsersList = async (req, res) => {
 };
 
 const logoutController = async (req, res) => {
+  const loginID = req.headers.userId;
   try {
+    const logoutUser = await users.findByIdAndUpdate(loginID, {
+      isOnline: false,
+    });
     // res.cookie("access_token", "");
     res.clearCookie("access_token");
     res.clearCookie("refresh_token");

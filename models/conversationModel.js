@@ -5,6 +5,18 @@ const { Schema } = mongoose;
 
 const conversationSchema = new Schema(
   {
+    isGroup: {
+      type: Boolean,
+      default: false,
+    },
+
+    groupName: {
+      type: String,
+    },
+
+    admin: {
+      type: ObjectId,
+    },
     users: [
       {
         type: ObjectId,
