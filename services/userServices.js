@@ -76,6 +76,10 @@ const validateLogin = async (req, res) => {
         loginQuery._id.valueOf()
       );
 
+      // const changeStatus = await users.findByIdAndUpdate(loginQuery._id, {
+      //   isOnline: true,
+      // });
+
       res.cookie("access_token", access_token);
       res.cookie("refresh_token", refresh_token);
 
@@ -83,6 +87,8 @@ const validateLogin = async (req, res) => {
       delete loginQuery?.password;
 
       const resp = loginQuery;
+
+      console.log("resp", resp);
 
       res.status(200).send({
         status: true,
@@ -122,11 +128,26 @@ const updateProfile = async (req, res) => {
 };
 
 const getUsersList = async (req, res) => {
+  const senderId = req.headers.userId;
+
   try {
-    const getUsers = await users.find(
-      {},
-      { email: 0, password: 0, createdAt: 0, updatedAt: 0, lastSeen: 0 }
-    );
+    const getUsers = await users.aggregate([
+      {
+        $match: {
+          _id: {
+            $ne: new ObjectId(senderId),
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          email: 1,
+          name: 1,
+          lastSeen: 1,
+        },
+      },
+    ]);
 
     res.status(200).send({ status: true, data: getUsers });
   } catch (error) {
@@ -199,6 +220,18 @@ const compareUsername = async (req, res) => {
   }
 };
 
+const changeStatus = async (userId, isOnline) => {
+  console.log("isOnline", isOnline);
+  try {
+    const changeQuery = await users.findByIdAndUpdate(userId, {
+      isOnline: isOnline,
+    });
+    console.log("changeQuery", changeQuery);
+  } catch (error) {
+    return { status: false, error: error.message };
+  }
+};
+
 module.exports = {
   registerNewUser,
   findUser,
@@ -208,4 +241,5 @@ module.exports = {
   changePassword,
   compareUsername,
   getUsersList,
+  changeStatus,
 };

@@ -345,6 +345,7 @@ const getChatsValidation = async (req, res, next) => {
       convoId: joi.string().required().messages({
         "string.empty": "Conversation ID must not be empty! ",
       }),
+      receiverId: joi.string().optional(),
     })
     .messages({
       "any.required": "Please send conversation ID only!",
@@ -353,7 +354,7 @@ const getChatsValidation = async (req, res, next) => {
   const errors = schema.validate(req.body);
 
   req.body.senderId = req.headers.userId;
-
+  // console.log("req.body", req.body);
   if (errors.error) {
     res.status(404).send({ status: false, error: errors.error.message });
   } else {
@@ -382,6 +383,55 @@ const deleteConvoValidations = (req, res, next) => {
   }
 };
 
+const createGroupValdiation = (req, res, next) => {
+  // console.log("req.body", req.body);
+  const schema = joi
+    .object({
+      groupName: joi.string().required().messages({
+        "string.empty": "Group Name must not be empty! ",
+      }),
+
+      users: joi.array().required(),
+    })
+    .messages({
+      "any.required": "Please send 'groupName' and 'users' only!",
+    });
+
+  const errors = schema.validate(req.body);
+  req.body.senderId = req.headers.userId;
+
+  if (errors.error) {
+    res.status(404).send({ status: false, error: errors.error.message });
+  } else {
+    next();
+  }
+};
+
+const editGroupValidations = (req, res, next) => {
+  const schema = joi
+    .object({
+      groupName: joi.string().required().messages({
+        "string.empty": "Group Name must not be empty! ",
+      }),
+      convoId: joi.string().required().messages({
+        "string.empty": "Conversation ID must not be empty! ",
+      }),
+      users: joi.array().required(),
+    })
+    .messages({
+      "any.required": "Please send 'groupName', 'convoId' and 'users' only!",
+    });
+
+  const errors = schema.validate(req.body);
+  req.body.senderId = req.headers.userId;
+
+  if (errors.error) {
+    res.status(404).send({ status: false, error: errors.error.message });
+  } else {
+    next();
+  }
+};
+
 module.exports = {
   signUpValidation,
   loginValidations,
@@ -394,4 +444,6 @@ module.exports = {
   convoValidation,
   getChatsValidation,
   deleteConvoValidations,
+  createGroupValdiation,
+  editGroupValidations
 };
